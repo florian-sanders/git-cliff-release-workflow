@@ -31,5 +31,5 @@ jobs:
       - name: Commit and push changelog
         run: |
           git add CHANGELOG.md
-          git commit -m "chore(CHANGELOG): update [skip ci]" || echo "No changes to commit"
+          git commit -m "chore(CHANGELOG): update" || echo "No changes to commit"
           git push
