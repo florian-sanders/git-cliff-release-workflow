@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - *(test)* Init workflow
 - *(.github/workflows)* Test release workflow
+- *(toto)* Toto
 
 ### 🐛 Bug Fixes
 
@@ -21,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(test2)* Blablaaaaaa
+- *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
