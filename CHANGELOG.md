@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 
+- Add tag support
+
+## [0.1.0] - 2025-06-08
+
+### 🚀 Features
+
 - *(test)* Init workflow
 - *(.github/workflows)* Test release workflow
 - *(toto)* Toto
@@ -35,6 +41,7 @@ All notable changes to this project will be documented in this file.
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
+- *(CHANGELOG)* Update
 - *(CHANGELOG)* Update
 - *(CHANGELOG)* Update
 
