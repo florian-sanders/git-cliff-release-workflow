@@ -8,6 +8,16 @@ All notable changes to this project will be documented in this file.
 
 - Add tag support
 
+### 🐛 Bug Fixes
+
+- *(.github/workflows)* Skip changelog
+- Release
+- *(new)* New
+
+### ⚙️ Miscellaneous Tasks
+
+- *(CHANGELOG)* Update [skip changelog]
+
 ## [0.1.0] - 2025-06-08
 
 ### 🚀 Features
