@@ -1,0 +1,39 @@
+name: Prepare release
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'prepare-next-release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get new version and changelog
+        id: cliff
+        uses: orhun/git-cliff-action@v4
+        with:
+          args: --bump
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Create GitHub Release (and tag)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.cliff.outputs.version }}" \
+            --title "${{ steps.cliff.outputs.version }}" \
+            --notes "${{ steps.cliff.outputs.content }}"
