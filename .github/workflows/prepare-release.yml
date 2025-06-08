@@ -16,6 +16,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Exit if any commit message contains [skip ci]
+        run: |
+          git fetch origin main
+          COMMIT_MESSAGES=$(git log ${{ github.event.before }}..${{ github.sha }} --pretty=%B)
+          echo "$COMMIT_MESSAGES" | grep -q '\[skip ci\]' && {
+            echo "[skip ci] found in commit messages, exiting workflow."
+            exit 0
+          }
+
       - name: Set up git user
         run: |
           git config --global user.name "github-actions[bot]"
