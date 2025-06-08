@@ -65,7 +65,7 @@ jobs:
 
       - name: Get new version and changelog (PR merged)
         if: github.event_name == 'pull_request'
-        id: cliff
+        id: cliff_pr
         uses: orhun/git-cliff-action@v4
         with:
           args: --bump
@@ -74,7 +74,7 @@ jobs:
 
       - name: Use tag as version and changelog (tag push)
         if: github.event_name == 'push'
-        id: cliff
+        id: cliff_tag
         run: |
           echo "version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
           echo "content=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
@@ -83,9 +83,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ steps.cliff.outputs.version }}" \
-            --title "${{ steps.cliff.outputs.version }}" \
-            --notes "${{ steps.cliff.outputs.content }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            gh release create "${{ steps.cliff_pr.outputs.version }}" \
+              --title "${{ steps.cliff_pr.outputs.version }}" \
+              --notes "${{ steps.cliff_pr.outputs.content }}"
+          else
+            gh release create "${{ steps.cliff_tag.outputs.version }}" \
+              --title "${{ steps.cliff_tag.outputs.version }}" \
+              --notes "${{ steps.cliff_tag.outputs.content }}"
+          fi
 
       - name: Close release PR if tag push
         if: github.event_name == 'push'
