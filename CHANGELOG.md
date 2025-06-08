@@ -13,9 +13,11 @@ All notable changes to this project will be documented in this file.
 - *(.github/workflows)* Skip changelog
 - Release
 - *(new)* New
+- Blabla
 
 ### ⚙️ Miscellaneous Tasks
 
+- *(CHANGELOG)* Update [skip changelog]
 - *(CHANGELOG)* Update [skip changelog]
 
 ## [0.1.0] - 2025-06-08
