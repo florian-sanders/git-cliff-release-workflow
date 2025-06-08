@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0] - 2025-06-08
+## [unreleased]
 
 ### 🚀 Features
 
@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(test2)* Blablaaaaaa
+- *(CHANGELOG)* Update [skip ci]
+- *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
