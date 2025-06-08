@@ -2,11 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.2.0] - 2025-06-08
 
 ### 🚀 Features
 
 - Add tag support
+
+### 🐛 Bug Fixes
+
+- *(.github/workflows)* Skip changelog
+- Release
+
+### ⚙️ Miscellaneous Tasks
+
+- *(CHANGELOG)* Update [skip changelog]
 
 ## [0.1.0] - 2025-06-08
 
