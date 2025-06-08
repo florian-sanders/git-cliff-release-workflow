@@ -2,13 +2,16 @@ name: Release
 
 on:
   pull_request:
-    types:
-      - closed
-    branches:
-      - main
+    types: [closed]
+    branches: [main]
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   check_release_pr:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     outputs:
       is_release_pr: ${{ steps.check.outputs.is_release_pr }}
@@ -17,8 +20,6 @@ jobs:
       - name: Check if this is a merged release PR
         id: check
         run: |
-          echo "merged: ${{ github.event.pull_request.merged }}"
-          echo "head ref: ${{ github.event.pull_request.head.ref }}"
           if [[ "${{ github.event.pull_request.merged }}" == "true" && "${{ github.event.pull_request.head.ref }}" == "prepare-next-release" ]]; then
             echo "is_release_pr=true" >> $GITHUB_OUTPUT
             echo "merge_commit_sha=${{ github.event.pull_request.merge_commit_sha }}" >> $GITHUB_OUTPUT
@@ -28,10 +29,18 @@ jobs:
           fi
 
   do_release:
-    needs: check_release_pr
-    if: needs.check_release_pr.outputs.is_release_pr == 'true'
+    needs: [check_release_pr]
+    if: |
+      (github.event_name == 'pull_request' && needs.check_release_pr.outputs.is_release_pr == 'true') ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
     runs-on: ubuntu-latest
     steps:
+      - name: Exit if tag push was by github-actions[bot]
+        if: github.event_name == 'push' && github.actor == 'github-actions[bot]'
+        run: |
+          echo "Tag push by bot, exiting to avoid cycle."
+          exit 0
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -42,18 +51,33 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Checkout merge commit
+      - name: Checkout merge commit (PR merged)
+        if: github.event_name == 'pull_request'
         run: |
           git fetch origin main
           git checkout ${{ needs.check_release_pr.outputs.merge_commit_sha }}
 
-      - name: Get new version and changelog
+      - name: Use tag commit (tag push)
+        if: github.event_name == 'push'
+        run: |
+          git fetch --tags
+          git checkout ${{ github.ref_name }}
+
+      - name: Get new version and changelog (PR merged)
+        if: github.event_name == 'pull_request'
         id: cliff
         uses: orhun/git-cliff-action@v4
         with:
           args: --bump
         env:
           GITHUB_REPO: ${{ github.repository }}
+
+      - name: Use tag as version and changelog (tag push)
+        if: github.event_name == 'push'
+        id: cliff
+        run: |
+          echo "version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          echo "content=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release (and tag)
         env:
@@ -62,3 +86,13 @@ jobs:
           gh release create "${{ steps.cliff.outputs.version }}" \
             --title "${{ steps.cliff.outputs.version }}" \
             --notes "${{ steps.cliff.outputs.content }}"
+
+      - name: Close release PR if tag push
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr close "$PR_NUMBER" --delete-branch --comment "Closed automatically after tag push."
+          fi
