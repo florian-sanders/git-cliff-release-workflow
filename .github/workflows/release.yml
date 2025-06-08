@@ -8,8 +8,28 @@ on:
       - main
 
 jobs:
-  release:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'prepare-next-release'
+  check_release_pr:
+    runs-on: ubuntu-latest
+    outputs:
+      is_release_pr: ${{ steps.check.outputs.is_release_pr }}
+      merge_commit_sha: ${{ steps.check.outputs.merge_commit_sha }}
+    steps:
+      - name: Check if this is a merged release PR
+        id: check
+        run: |
+          echo "merged: ${{ github.event.pull_request.merged }}"
+          echo "head ref: ${{ github.event.pull_request.head.ref }}"
+          if [[ "${{ github.event.pull_request.merged }}" == "true" && "${{ github.event.pull_request.head.ref }}" == "prepare-next-release" ]]; then
+            echo "is_release_pr=true" >> $GITHUB_OUTPUT
+            echo "merge_commit_sha=${{ github.event.pull_request.merge_commit_sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "is_release_pr=false" >> $GITHUB_OUTPUT
+            echo "merge_commit_sha=" >> $GITHUB_OUTPUT
+          fi
+
+  do_release:
+    needs: check_release_pr
+    if: needs.check_release_pr.outputs.is_release_pr == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,6 +41,11 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Checkout merge commit
+        run: |
+          git fetch origin main
+          git checkout ${{ needs.check_release_pr.outputs.merge_commit_sha }}
 
       - name: Get new version and changelog
         id: cliff
