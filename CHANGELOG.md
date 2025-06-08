@@ -12,12 +12,14 @@ All notable changes to this project will be documented in this file.
 
 - *(test1)* Blabla
 - *(.github/workflows)* Change action name
+- *(.github/workflows)* Avoid rerun on changelog update
 
 ### ⚙️ Miscellaneous Tasks
 
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(test2)* Blablaaaaaa
+- *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
 - *(CHANGELOG)* Update [skip ci]
