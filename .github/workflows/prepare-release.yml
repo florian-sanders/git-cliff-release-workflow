@@ -17,6 +17,13 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Skip if merge commit
+        run: |
+          if [ "$(git rev-list --parents -n 1 $GITHUB_SHA | wc -w)" -gt 2 ]; then
+            echo "Merge commit detected. Skipping workflow."
+            exit 0
+          fi
+
       - name: Set up git user
         run: |
           git config --global user.name "github-actions[bot]"
