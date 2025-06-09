@@ -15,12 +15,15 @@ All notable changes to this project will be documented in this file.
 - Release
 - *(new)* New
 - Blabla
+- Fetch tags
 
 ### ⚙️ Miscellaneous Tasks
 
 - *(CHANGELOG)* Update [skip changelog]
 - *(CHANGELOG)* Update [skip changelog]
 - *(CHANGELOG)* Update [skip changelog]
+- *(CHANGELOG)* Update [skip changelog]
+- *(release)* Fix bump
 
 ## [0.1.0] - 2025-06-08
 
