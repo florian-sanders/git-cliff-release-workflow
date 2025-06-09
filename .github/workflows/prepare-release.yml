@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-concurrency:
-  group: release-group
-  cancel-in-progress: true
-
 jobs:
   check_for_changes:
     runs-on: ubuntu-latest
@@ -21,10 +17,15 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Skip if
+      - name: Skip if commit is from prepare-next-release or contains [skip changelog]
         run: |
-          if [ "$(git rev-list --parents -n 1 $GITHUB_SHA | wc -w)" -gt 2 ]; then
-            echo "Merge commit detected. Skipping workflow."
+          MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
+          if echo "$MESSAGE" | grep -q "prepare-next-release"; then
+            echo "Automated release commit detected. Skipping workflow."
+            exit 0
+          fi
+          if echo "$MESSAGE" | grep -iq "\[skip changelog\]"; then
+            echo "[skip changelog] detected in commit message. Skipping workflow."
             exit 0
           fi
 
