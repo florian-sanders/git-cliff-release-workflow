@@ -3,6 +3,15 @@
 ## [unreleased]
 
 
+### 🐛 Bug Fixes
+
+
+* **new-commit:** blabla (df50c1e)
+
+
+## [0.1.0](https://github.com/[object]/compare/...0.1.0) (2025-06-09)
+
+
 ### ✨ Features
 
 
