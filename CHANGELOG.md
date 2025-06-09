@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.0](https://github.com/[object]/compare/0.1.5...0.2.0) (2025-06-09)
+
+
+### ♻️ Refactoring
+
+
+* **new-commit4:** new (7a06e4c)
+
+
+### ✨ Features
+
+
+* **bla:** bla (84cc4cd)
+
+
+### 🔧 Chores
+
+
+* **cleanup:** clean (58305e4)
+
+
 ## [0.1.5](https://github.com/[object]/compare/0.1.4...0.1.5) (2025-06-09)
 
 
