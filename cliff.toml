@@ -24,6 +24,7 @@ postprocessors = []
 
 [git]
 commit_parsers = [
+  { message = '\[skip changelog\]', skip = true },
   { message = "^feat", group = "✨ Features" },
   { message = "^fix", group = "🐛 Bug Fixes" },
   { message = "^chore", group = "🔧 Chores" },
@@ -34,7 +35,6 @@ commit_parsers = [
   { message = "^ci", group = "👷 CI" },
   { message = "^build", group = "🛠 Build System" },
   { message = ".*", group = "Other" },
-  { message = "[skip changelog]", skip = true },
 ]
 conventional_commits = true
 filter_unconventional = true
