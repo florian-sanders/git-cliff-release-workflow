@@ -8,6 +8,8 @@
 
 * set up concurrency to prevent cycles (d825443)
 
+* implement skip changelog (7853f8e)
+
 
 ## [0.1.2](https://github.com/[object]/compare/0.1.1...0.1.2) (2025-06-09)
 
