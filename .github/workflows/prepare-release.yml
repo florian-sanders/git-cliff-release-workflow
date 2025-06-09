@@ -64,7 +64,7 @@ jobs:
         id: bump-changelog
         uses: orhun/git-cliff-action@v4
         with:
-          args: --bump
+          args: --unreleased --bump
         env:
           OUTPUT: CHANGELOG.md
           GITHUB_REPO: ${{ github.repository }}
