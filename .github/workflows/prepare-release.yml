@@ -18,14 +18,17 @@ jobs:
           fetch-tags: true
 
       - name: Skip if commit is from prepare-next-release or contains [skip changelog]
+        id: skip-check
         run: |
           MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
           if echo "$MESSAGE" | grep -q "prepare-next-release"; then
             echo "Automated release commit detected. Skipping workflow."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
           if echo "$MESSAGE" | grep -iq "\[skip changelog\]"; then
             echo "[skip changelog] detected in commit message. Skipping workflow."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
