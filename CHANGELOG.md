@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [0.1.1](https://github.com/[object]/compare/0.1.0...0.1.1) (2025-06-09)
 
 
 ### 🐛 Bug Fixes
