@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: release-group
+  cancel-in-progress: true
+
 jobs:
   check_for_changes:
     runs-on: ubuntu-latest
@@ -17,7 +21,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Skip if merge commit
+      - name: Skip if
         run: |
           if [ "$(git rev-list --parents -n 1 $GITHUB_SHA | wc -w)" -gt 2 ]; then
             echo "Merge commit detected. Skipping workflow."
