@@ -6,8 +6,36 @@ on:
       - main
 
 jobs:
+  only_run_if_no_release:
+    runs-on: ubuntu-latest
+    outputs:
+      should_continue: ${{ steps.get-should-continue.outputs.should_continue }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Skip if commit is from prepare-next-release or contains [skip changelog]
+        id: get-should-continue
+        run: |
+          SHOULD_CONTINUE=true
+          MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
+          if echo "$MESSAGE" | grep -q "prepare-next-release"; then
+            echo "Automated release commit detected. Skipping workflow."
+            SHOULD_CONTINUE=false
+          fi
+          if echo "$MESSAGE" | grep -iq "\[skip changelog\]"; then
+            echo "[skip changelog] detected in commit message. Skipping workflow."
+            SHOULD_CONTINUE=false
+          fi
+          echo "should_continue=$SHOULD_CONTINUE" >> $GITHUB_OUTPUT
+          echo "should_continue=$SHOULD_CONTINUE"
+
   check_for_changes:
     runs-on: ubuntu-latest
+    needs: only_run_if_no_release
+    if: needs.only_run_if_no_release.outputs.should_continue == 'true'
     outputs:
       has_changes: ${{ steps.get-has-changes.outputs.has_changes }}
     steps:
@@ -16,21 +44,6 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Skip if commit is from prepare-next-release or contains [skip changelog]
-        id: skip-check
-        run: |
-          MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
-          if echo "$MESSAGE" | grep -q "prepare-next-release"; then
-            echo "Automated release commit detected. Skipping workflow."
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          if echo "$MESSAGE" | grep -iq "\[skip changelog\]"; then
-            echo "[skip changelog] detected in commit message. Skipping workflow."
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
 
       - name: Set up git user
         run: |
