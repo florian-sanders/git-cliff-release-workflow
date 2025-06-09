@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### 🚀 Features
 
 - Add tag support
+- *(test-new)* Init blabla
 
 ### 🐛 Bug Fixes
 
@@ -17,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- *(CHANGELOG)* Update [skip changelog]
 - *(CHANGELOG)* Update [skip changelog]
 - *(CHANGELOG)* Update [skip changelog]
 
