@@ -30,7 +30,6 @@ jobs:
             SHOULD_CONTINUE=false
           fi
           echo "should_continue=$SHOULD_CONTINUE" >> $GITHUB_OUTPUT
-          echo "should_continue=$SHOULD_CONTINUE"
 
   check_for_changes:
     runs-on: ubuntu-latest
