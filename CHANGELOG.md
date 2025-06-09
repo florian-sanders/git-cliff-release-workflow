@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.5](https://github.com/[object]/compare/0.1.4...0.1.5) (2025-06-09)
+
+
+### 🐛 Bug Fixes
+
+
+* another ci fix (2a23322)
+
+
 ## [0.1.4](https://github.com/[object]/compare/0.1.3...0.1.4) (2025-06-09)
 
 
