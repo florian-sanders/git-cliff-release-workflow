@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [0.1.2](https://github.com/[object]/compare/0.1.1...0.1.2) (2025-06-09)
 
 
 ### 🐛 Bug Fixes
@@ -13,6 +13,8 @@
 
 
 * **prepare-release:** skip if merge commit (160f0cb)
+
+* **changelog:** disable temporarily (ad710a0)
 
 
 ## [0.1.1](https://github.com/[object]/compare/0.1.0...0.1.1) (2025-06-09)
