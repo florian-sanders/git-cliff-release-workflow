@@ -52,3 +52,4 @@ jobs:
             gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release $VERSION" --body "Automated merge for release $VERSION"
           else
             echo "No open release PR found to merge."
+          fi
