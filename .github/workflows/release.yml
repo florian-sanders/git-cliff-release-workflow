@@ -4,14 +4,9 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
-  push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
-      - "[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   check_release_pr:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     outputs:
       is_release_pr: ${{ steps.check.outputs.is_release_pr }}
