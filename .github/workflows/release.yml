@@ -31,8 +31,7 @@ jobs:
   do_release:
     needs: [check_release_pr]
     if: |
-      (github.event_name == 'pull_request' && needs.check_release_pr.outputs.is_release_pr == 'true') ||
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+      (github.event_name == 'pull_request' && needs.check_release_pr.outputs.is_release_pr == 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Exit if tag push was by github-actions[bot]
@@ -82,24 +81,14 @@ jobs:
 
       - name: Bump cargo & extension version
         run: |
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}"/' Cargo.toml
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}"/' extension.toml
+          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "${{ steps.cliff_pr.outputs.version }}"/' Cargo.toml
+          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "${{ steps.cliff_pr.outputs.version }}"/' extension.toml
 
       - name: Create GitHub Release (and tag)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git tag ${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}
-            gh release create "${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}" \
-              --title "${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}" \
-              --notes "${{ steps.cliff_pr.outputs.content || steps.cliff_tag.outputs.content }}"
-
-      - name: Close release PR if tag push
-        if: github.event_name == 'push'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
-          if [ -n "$PR_NUMBER" ]; then
-            gh pr close "$PR_NUMBER" --delete-branch --comment "Closed automatically after tag push."
-          fi
+          git tag ${{ steps.cliff_pr.outputs.version }}
+            gh release create "${{ steps.cliff_pr.outputs.version }}" \
+              --title "${{ steps.cliff_pr.outputs.version }}" \
+              --notes "${{ steps.cliff_pr.outputs.content }}"
