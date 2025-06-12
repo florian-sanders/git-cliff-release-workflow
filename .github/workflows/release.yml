@@ -89,16 +89,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add .
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            gh release create "${{ steps.cliff_pr.outputs.version }}" \
-              --title "${{ steps.cliff_pr.outputs.version }}" \
-              --notes "${{ steps.cliff_pr.outputs.content }}"
-          else
-            gh release create "${{ steps.cliff_tag.outputs.version }}" \
-              --title "${{ steps.cliff_tag.outputs.version }}" \
-              --notes "${{ steps.cliff_tag.outputs.content }}"
-          fi
+          git tag ${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}
+            gh release create "${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}" \
+              --title "${{ steps.cliff_pr.outputs.version || steps.cliff_tag.outputs.version }}" \
+              --notes "${{ steps.cliff_pr.outputs.content || steps.cliff_tag.outputs.content }}"
 
       - name: Close release PR if tag push
         if: github.event_name == 'push'
