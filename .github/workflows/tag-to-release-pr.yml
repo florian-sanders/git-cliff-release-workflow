@@ -45,7 +45,7 @@ jobs:
 
       - name: Merge release PR if exists
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_CLIFF_RELEASE_WORKFLOW_SECRET }}
         run: |
           PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
           if [ -n "$PR_NUMBER" ]; then
