@@ -81,7 +81,7 @@ jobs:
 
       - name: Create GitHub Release (and tag)
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_CLIFF_RELEASE_WORKFLOW_SECRET }}
         run: |
           git tag ${{ steps.cliff_pr.outputs.version }}
             gh release create "${{ steps.cliff_pr.outputs.version }}" \
