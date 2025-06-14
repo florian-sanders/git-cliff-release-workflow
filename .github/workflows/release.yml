@@ -79,11 +79,27 @@ jobs:
           sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "${{ steps.cliff_pr.outputs.version }}"/' Cargo.toml
           sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "${{ steps.cliff_pr.outputs.version }}"/' extension.toml
 
-      - name: Create GitHub Release (and tag)
+      - name: Create or update GitHub Release (and tag)
         env:
           GH_TOKEN: ${{ secrets.GIT_CLIFF_RELEASE_WORKFLOW_SECRET }}
         run: |
-          git tag ${{ steps.cliff_pr.outputs.version }}
-            gh release create "${{ steps.cliff_pr.outputs.version }}" \
-              --title "${{ steps.cliff_pr.outputs.version }}" \
-              --notes "${{ steps.cliff_pr.outputs.content }}"
+          TAG="${{ steps.cliff_pr.outputs.version }}"
+          # Check if tag exists
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG exists, force-updating to latest commit."
+            git tag -f "$TAG"
+            git push origin "$TAG" --force
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+          # Try to create the release, or update if it already exists
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "${{ steps.cliff_pr.outputs.content }}" \
+            --latest --target "$GITHUB_SHA" || \
+          gh release edit "$TAG" \
+            --title "$TAG" \
+            --notes "${{ steps.cliff_pr.outputs.content }}" \
+            --latest --target "$GITHUB_SHA"
