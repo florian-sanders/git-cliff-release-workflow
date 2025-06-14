@@ -142,11 +142,11 @@ jobs:
         env:
           GITHUB_REPO: ${{ github.repository }}
 
-      - name: Update PR body with changelog
+      - name: Update PR title and body with changelog
         env:
           GH_TOKEN: ${{ secrets.GIT_CLIFF_RELEASE_WORKFLOW_SECRET }}
         run: |
           PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
           if [ -n "$PR_NUMBER" ]; then
-            gh pr edit "$PR_NUMBER" --body "${{ steps.get-latest-content.outputs.content }}"
+            gh pr edit "$PR_NUMBER" --title "chore: release ${{ steps.bump-changelog.outputs.version }}" --body "${{ steps.get-latest-content.outputs.content }}"
           fi
