@@ -33,23 +33,22 @@ jobs:
         id: cliff_pr
         uses: orhun/git-cliff-action@v4
         with:
-          args: --unreleased --bump
+          args: --bump
         env:
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Prepare next release branch
         id: prepare-next-release-branch
         run: |
-          VERSION="${GITHUB_REF_NAME}"
           git reset --hard origin/main
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' Cargo.toml
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' extension.toml
-          version="$VERSION" >> $GITHUB_OUTPUT
+          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"${{ steps.cliff_pr.outputs.version }}"'"/' Cargo.toml
+          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"${{ steps.cliff_pr.outputs.version }}"'"/' extension.toml
+          version="${{ steps.cliff_pr.outputs.version }}" >> $GITHUB_OUTPUT
 
       - name: Commit updated files
         run: |
           git add Cargo.toml extension.toml CHANGELOG.md
-          git commit -m "chore: bump version to $VERSION [skip changelog]" || echo "No changes to commit"
+          git commit -m "chore: bump version to ${{ steps.cliff_pr.outputs.version }} [skip changelog]" || echo "No changes to commit"
           git push --set-upstream origin prepare-next-release --force
 
       - name: Merge release PR if exists
@@ -58,7 +57,7 @@ jobs:
         run: |
           PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
           if [ -n "$PR_NUMBER" ]; then
-            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release ${{ steps.prepare-next-release-branch.version }}" --body "Automated merge for release ${{ steps.prepare-next-release-branch.version }}"
+            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release ${{ steps.cliff_pr.outputs.version }}" --body "Automated merge for release ${{ steps.cliff_pr.outputs.version }}"
           else
             echo "No open release PR found to merge."
           fi
