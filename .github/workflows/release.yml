@@ -33,12 +33,6 @@ jobs:
       (github.event_name == 'pull_request' && needs.check_release_pr.outputs.is_release_pr == 'true')
     runs-on: ubuntu-latest
     steps:
-      - name: Exit if tag push was by github-actions[bot]
-        if: github.event_name == 'push' && github.actor == 'github-actions[bot]'
-        run: |
-          echo "Tag push by bot, exiting to avoid cycle."
-          exit 0
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -56,11 +50,11 @@ jobs:
           git fetch origin main
           git checkout ${{ needs.check_release_pr.outputs.merge_commit_sha }}
 
-      - name: Use tag commit (tag push)
-        if: github.event_name == 'push'
-        run: |
-          git fetch --tags
-          git checkout ${{ github.ref_name }}
+      # - name: Use tag commit (tag push)
+      #   if: github.event_name == 'push'
+      #   run: |
+      #     git fetch --tags
+      #     git checkout ${{ github.ref_name }}
 
       - name: Get new version and changelog (PR merged)
         if: github.event_name == 'pull_request'
@@ -71,12 +65,12 @@ jobs:
         env:
           GITHUB_REPO: ${{ github.repository }}
 
-      - name: Use tag as version and changelog (tag push)
-        if: github.event_name == 'push'
-        id: cliff_tag
-        run: |
-          echo "version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-          echo "content=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+      # - name: Use tag as version and changelog (tag push)
+      #   if: github.event_name == 'push'
+      #   id: cliff_tag
+      #   run: |
+      #     echo "version=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+      #     echo "content=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
       - name: Bump cargo & extension version
         run: |

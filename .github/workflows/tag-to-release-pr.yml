@@ -21,26 +21,12 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: prepare-next-release
 
       - name: Set up git user
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Prepare next release branch
-        id: prepare-next-release-branch
-        run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          git fetch origin main
-          if git ls-remote --exit-code --heads origin prepare-next-release; then
-            git checkout prepare-next-release
-            git reset --hard origin/main
-          else
-            git checkout -b prepare-next-release origin/main
-          fi
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' Cargo.toml
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' extension.toml
-          version="$VERSION" >> $GITHUB_OUTPUT
 
       - name: Get new version and changelog (PR merged)
         if: github.event_name == 'pull_request'
@@ -50,6 +36,15 @@ jobs:
           args: --unreleased --bump
         env:
           GITHUB_REPO: ${{ github.repository }}
+
+      - name: Prepare next release branch
+        id: prepare-next-release-branch
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          git reset --hard origin/main
+          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' Cargo.toml
+          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' extension.toml
+          version="$VERSION" >> $GITHUB_OUTPUT
 
       - name: Commit updated files
         run: |
