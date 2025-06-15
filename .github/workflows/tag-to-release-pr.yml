@@ -63,7 +63,7 @@ jobs:
         run: |
           PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
           if [ -n "$PR_NUMBER" ]; then
-            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release {{ steps.prepare-next-release-branch }}" --body "Automated merge for release {{ steps.prepare-next-release-branch }}"
+            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release ${{ steps.prepare-next-release-branch }}" --body "Automated merge for release ${{ steps.prepare-next-release-branch }}"
           else
             echo "No open release PR found to merge."
           fi
