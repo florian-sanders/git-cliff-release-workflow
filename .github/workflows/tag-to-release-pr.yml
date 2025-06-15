@@ -28,6 +28,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Prepare next release branch
+        id: prepare-next-release-branch
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           git fetch origin main
@@ -39,7 +40,20 @@ jobs:
           fi
           sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' Cargo.toml
           sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"$VERSION"'"/' extension.toml
-          git add Cargo.toml extension.toml
+          version="$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get new version and changelog (PR merged)
+        if: github.event_name == 'pull_request'
+        id: cliff_pr
+        uses: orhun/git-cliff-action@v4
+        with:
+          args: --unreleased --bump
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Commit updated files
+        run: |
+          git add Cargo.toml extension.toml CHANGELOG.md
           git commit -m "chore: bump version to $VERSION [skip changelog]" || echo "No changes to commit"
           git push --set-upstream origin prepare-next-release --force
 
@@ -49,7 +63,7 @@ jobs:
         run: |
           PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
           if [ -n "$PR_NUMBER" ]; then
-            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release $VERSION" --body "Automated merge for release $VERSION"
+            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release {{ steps.prepare-next-release-branch }}" --body "Automated merge for release {{ steps.prepare-next-release-branch }}"
           else
             echo "No open release PR found to merge."
           fi
