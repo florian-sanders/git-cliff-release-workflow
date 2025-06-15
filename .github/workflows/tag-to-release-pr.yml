@@ -1,63 +1,63 @@
-name: Tag to Release PR
+# name: Tag to Release PR
 
-on:
-  push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
-      - "[0-9]+.[0-9]+.[0-9]+"
+# on:
+#   push:
+#     tags:
+#       - "v[0-9]+.[0-9]+.[0-9]+"
+#       - "[0-9]+.[0-9]+.[0-9]+"
 
-jobs:
-  tag_to_release_pr:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Exit if tag push was by github-actions[bot]
-        if: github.actor == 'github-actions[bot]'
-        run: |
-          echo "Tag push by bot, exiting to avoid cycle."
-          exit 0
+# jobs:
+#   tag_to_release_pr:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Exit if tag push was by github-actions[bot]
+#         if: github.actor == 'github-actions[bot]'
+#         run: |
+#           echo "Tag push by bot, exiting to avoid cycle."
+#           exit 0
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-          ref: prepare-next-release
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#           fetch-tags: true
+#           ref: prepare-next-release
 
-      - name: Set up git user
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#       - name: Set up git user
+#         run: |
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Get new version and changelog (PR merged)
-        if: github.event_name == 'pull_request'
-        id: cliff_pr
-        uses: orhun/git-cliff-action@v4
-        with:
-          args: --bump
-        env:
-          GITHUB_REPO: ${{ github.repository }}
+#       - name: Get new version and changelog (PR merged)
+#         if: github.event_name == 'pull_request'
+#         id: cliff_pr
+#         uses: orhun/git-cliff-action@v4
+#         with:
+#           args: --bump
+#         env:
+#           GITHUB_REPO: ${{ github.repository }}
 
-      - name: Prepare next release branch
-        id: prepare-next-release-branch
-        run: |
-          git reset --hard origin/main
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"${{ steps.cliff_pr.outputs.version }}"'"/' Cargo.toml
-          sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"${{ steps.cliff_pr.outputs.version }}"'"/' extension.toml
-          version="${{ steps.cliff_pr.outputs.version }}" >> $GITHUB_OUTPUT
+#       - name: Prepare next release branch
+#         id: prepare-next-release-branch
+#         run: |
+#           git reset --hard origin/main
+#           sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"${{ steps.cliff_pr.outputs.version }}"'"/' Cargo.toml
+#           sed -i 's/^version = "[0-9]\+\.[0-9]\+\.[0-9]\+"/version = "'"${{ steps.cliff_pr.outputs.version }}"'"/' extension.toml
+#           version="${{ steps.cliff_pr.outputs.version }}" >> $GITHUB_OUTPUT
 
-      - name: Commit updated files
-        run: |
-          git add Cargo.toml extension.toml CHANGELOG.md
-          git commit -m "chore: bump version to ${{ steps.cliff_pr.outputs.version }} [skip changelog]" || echo "No changes to commit"
-          git push --set-upstream origin prepare-next-release --force
+#       - name: Commit updated files
+#         run: |
+#           git add Cargo.toml extension.toml CHANGELOG.md
+#           git commit -m "chore: bump version to ${{ steps.cliff_pr.outputs.version }} [skip changelog]" || echo "No changes to commit"
+#           git push --set-upstream origin prepare-next-release --force
 
-      - name: Merge release PR if exists
-        env:
-          GH_TOKEN: ${{ secrets.GIT_CLIFF_RELEASE_WORKFLOW_SECRET }}
-        run: |
-          PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
-          if [ -n "$PR_NUMBER" ]; then
-            gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release ${{ steps.cliff_pr.outputs.version }}" --body "Automated merge for release ${{ steps.cliff_pr.outputs.version }}"
-          else
-            echo "No open release PR found to merge."
-          fi
+#       - name: Merge release PR if exists
+#         env:
+#           GH_TOKEN: ${{ secrets.GIT_CLIFF_RELEASE_WORKFLOW_SECRET }}
+#         run: |
+#           PR_NUMBER=$(gh pr list --state open --head prepare-next-release --json number -q '.[0].number')
+#           if [ -n "$PR_NUMBER" ]; then
+#             gh pr merge "$PR_NUMBER" --merge --admin --delete-branch --subject "Release ${{ steps.cliff_pr.outputs.version }}" --body "Automated merge for release ${{ steps.cliff_pr.outputs.version }}"
+#           else
+#             echo "No open release PR found to merge."
+#           fi
