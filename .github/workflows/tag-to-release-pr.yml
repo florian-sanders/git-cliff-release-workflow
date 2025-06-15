@@ -1,7 +1,7 @@
 # name: Tag to Release PR
 
-# on:
-#   push:
+on:
+  push:
 #     tags:
 #       - "v[0-9]+.[0-9]+.[0-9]+"
 #       - "[0-9]+.[0-9]+.[0-9]+"
