@@ -1,5 +1,76 @@
 # Changelog
 
+## [1.0.0](https://github.com/[object]/compare/0.3.0...1.0.0) (2025-06-16)
+
+
+### ✅ Tests
+
+
+* check (6acaf6e)
+
+* try another way (4d606ee)
+
+
+### ✨ Features
+
+
+* bump cargo & extension (6b4de90)
+
+* add b (464ddba)
+
+* i'm lost (d0a7b8d)
+
+* new test (493c820)
+
+
+### 🐛 Bug Fixes
+
+
+* add tag workflow (58a05ea)
+
+* a text (9dfad39)
+
+* use PAT token (0d8bb12)
+
+* add Cargo.lock (a32a8b7)
+
+* tag release (update or create) (eba910b)
+
+* Cargo.lock bump (74330f7)
+
+* workflow avoid race conditions (27fdef3)
+
+* always update prepare-release PR title (e7c5800)
+
+* release changelog (01b2e7a)
+
+* another changelog fix (d6c2bf6)
+
+* one more time (a28487f)
+
+* one more time (b592380)
+
+* anotherrr (5d1134a)
+
+* proper release (b8e29f6)
+
+
+### 👷 CI
+
+
+* fix release (a7fea62)
+
+
+### 🔧 Chores
+
+
+* toto (69b6ca2)
+
+* c (92b4bb5)
+
+* c (1a7989f)
+
+
 ## [0.3.0](https://github.com/[object]/compare/0.2.0...0.3.0) (2025-06-12)
 
 
