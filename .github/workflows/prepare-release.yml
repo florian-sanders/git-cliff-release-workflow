@@ -100,18 +100,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          run: |
-            echo "PR_NUMBER: $PR_NUMBER"
-            PR_STATE=$(gh pr view "$PR_NUMBER" --json state -q '.state')
-            echo "PR_STATE: $PR_STATE"
-            if [ "$PR_STATE" == "\"OPEN\"" ]; then
-              LABELS=$(gh pr view "$PR_NUMBER" --json labels -q '.labels.[].name')
-              echo "LABELS=$LABELS" >> $GITHUB_OUTPUT
-              echo "Labels: $LABELS"
-            else
-              echo "PR is not open, skipping label retrieval."
-              echo "LABELS=" >> $GITHUB_OUTPUT
-            fi
+        run: |
+          echo "PR_NUMBER: $PR_NUMBER"
+          PR_STATE=$(gh pr view "$PR_NUMBER" --json state -q '.state')
+          echo "PR_STATE: $PR_STATE"
+          if [ "$PR_STATE" == "OPEN" ]; then
+            LABELS=$(gh pr view "$PR_NUMBER" --json labels -q '.labels.[].name')
+            echo "LABELS=$LABELS" >> $GITHUB_OUTPUT
+            echo "Labels: $LABELS"
+          else
+            echo "PR is not open, skipping label retrieval."
+            echo "LABELS=" >> $GITHUB_OUTPUT
+          fi
 
       - name: Extract version
         id: extract

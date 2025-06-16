@@ -79,7 +79,7 @@ jobs:
         id: cliff_pr
         uses: orhun/git-cliff-action@v4
         with:
-          args: --unreleased --bumped-version ${{ steps.extract.outputs.version != '' && format('--tag {0}', steps.extract.outputs.version) || '' }}
+          args: --unreleased --bump ${{ steps.extract.outputs.version != '' && format('--tag {0}', steps.extract.outputs.version) || '' }}
         env:
           GITHUB_REPO: ${{ github.repository }}
 
