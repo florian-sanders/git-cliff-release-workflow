@@ -1,5 +1,8 @@
 # git-cliff ~ configuration file
 # https://git-cliff.org/docs/configuration
+[remote.github]
+owner = "florian-sanders"
+repo = "zed-stylelint"
 
 [changelog]
 header = "# Changelog"
@@ -13,7 +16,23 @@ body = """
 ### {{ group }}
 
 {% for commit in commits %}
-* {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message | trim }}{% if commit.link %} ([{{ commit.id | truncate(length=7, end="") }}]({{ commit.link }})){% else %} ({{ commit.id | truncate(length=7, end="") }}){% endif %}
+{% if commit.remote.pr_number %}
+{{ commit.remote.pr_number }}
+{% endif %}
+{% if commit.remote.username %}
+{{ commit.remote.username }}
+{% endif %}
+* {% if commit.scope -%}
+  **{{ commit.scope }}:**
+  {% endif -%}
+  {% if commit.breaking -%}[**breaking**] {% endif -%}
+  {{ commit.message | trim }}
+  [{{ commit.id | truncate(length=7, end="") }}](https://github.com/hawkw/mycelium/{{ commit.id }})\
+  {%- if commit.links %}
+    ({%- for link in commit.links %}
+      [{{link.text}}]({{link.href}})
+    {% endfor -%})
+  {% endif %}
 {% endfor %}
 {% endfor %}
 """
@@ -42,7 +61,9 @@ commit_preprocessors = []
 protect_breaking_commits = false
 filter_commits = false
 link_parsers = [
-  { pattern = "(?P<id>[a-f0-9]{7,40})", href = "https://github.com/florian-sanders/zed-stylelint/commit/{{id}}" },
+  { pattern = "[fF]ixes #(\\d+)", text = "fixes [#${1}]", href = "https://github.com/florian-sanders/git-cliff-release-workflow/issues/$1"},
+  { pattern = "[cC]loses #(\\d+)", text = "closes [#${1}]", href = "https://github.com/florian-sanders/git-cliff-release-workflow/issues/$1"},
+  { pattern = "[sS]ee #(\\d+)", text = "see [#${1}]", href = "https://github.com/florian-sanders/git-cliff-release-workflow/issues/$1"},
 ]
 use_branch_tags = false
 topo_order = false
