@@ -24,7 +24,7 @@ body = """
   [**breaking**]
   {%- endif -%}
   {{- commit.message | trim -}} {{- " " -}}
-  [{{ commit.id | truncate(length=7, end="") }}](https://github.com/florian-sanders/git-cliff-release-workflow/{{ commit.id }})
+  ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/florian-sanders/git-cliff-release-workflow/{{ commit.id }}))
   {%- if commit.links -%}
     {{- " - " -}}
     {%- for link in commit.links -%}
