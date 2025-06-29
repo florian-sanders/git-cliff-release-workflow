@@ -28,7 +28,7 @@ body = """
   {%- if commit.links -%}
     {{- " - " -}}
     {%- for link in commit.links -%}
-      [{{- link.text | capitalize -}}]({{- link.href -}})
+      {{- link.text | capitalize -}}({{- link.href -}})
     {%- endfor -%}
     {{- " " -}}
   {%- endif %}
@@ -38,7 +38,8 @@ body = """
 footer = ""
 trim = true
 render_always = true
-postprocessors = []
+postprocessors = [
+]
 
 [git]
 commit_parsers = [
