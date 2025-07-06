@@ -29,6 +29,8 @@ jobs:
         run: |
           SHOULD_CONTINUE=true
           MESSAGE=$(git log -1 --pretty=%B $GITHUB_SHA)
+          echo $GITHUB_SHA
+          echo $MESSAGE
           if echo "$MESSAGE" | grep -q "prepare-next-release"; then
             echo "Automated release commit detected. Skipping workflow."
             SHOULD_CONTINUE=false
